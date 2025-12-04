@@ -200,5 +200,5 @@ MIT License
 ## 👨‍💻 Author
 
 **NguyenTranAn**  
-Personal Expense Manager - FER202 Project  
+Personal Expense Manager 
 GitHub: [@JuroMark](https://github.com/JuroMark)
