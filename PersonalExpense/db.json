@@ -1,53 +1,133 @@
 {
+  "categories": [
+    {
+      "id": "cat_1",
+      "name": "Lương & Thưởng",
+      "type": "income",
+      "icon": "💰",
+      "color": "#4CAF50"
+    },
+    {
+      "id": "cat_2",
+      "name": "Ăn uống",
+      "type": "expense",
+      "icon": "🍜",
+      "color": "#FF5722"
+    },
+    {
+      "id": "cat_3",
+      "name": "Di chuyển",
+      "type": "expense",
+      "icon": "🛵",
+      "color": "#2196F3"
+    },
+    {
+      "id": "cat_4",
+      "name": "Nhà ở & Điện nước",
+      "type": "expense",
+      "icon": "🏠",
+      "color": "#9C27B0"
+    },
+    {
+      "id": "cat_5",
+      "name": "Giải trí & Cafe",
+      "type": "expense",
+      "icon": "☕",
+      "color": "#E91E63"
+    },
+    {
+      "id": "cat_6",
+      "name": "Mua sắm",
+      "type": "expense",
+      "icon": "🛒",
+      "color": "#FFC107"
+    },
+    {
+      "id": "cat_7",
+      "name": "Đầu tư / Tiết kiệm",
+      "type": "income",
+      "icon": "📈",
+      "color": "#009688"
+    }
+  ],
   "transactions": [
     {
       "id": "1",
-      "title": "Lương tháng 10",
+      "description": "Lương tháng 10",
       "amount": 15000000,
       "type": "income",
-      "date": "2023-10-01"
+      "date": "2023-10-01",
+      "categoryId": "cat_1"
     },
     {
       "id": "2",
-      "title": "Tiền nhà trọ",
+      "description": "Tiền nhà trọ tháng 10",
       "amount": 3500000,
       "type": "expense",
-      "date": "2023-10-05"
+      "date": "2023-10-05",
+      "categoryId": "cat_4"
     },
     {
       "id": "3",
-      "title": "Cà phê Highland",
+      "description": "Cà phê Highland với bạn",
       "amount": 45000,
       "type": "expense",
-      "date": "2023-10-25"
+      "date": "2023-10-25",
+      "categoryId": "cat_5"
     },
     {
       "id": "4",
-      "title": "Thưởng dự án",
+      "description": "Thưởng dự án quý 3",
       "amount": 2000000,
       "type": "income",
-      "date": "2023-10-20"
+      "date": "2023-10-20",
+      "categoryId": "cat_1"
     },
     {
       "id": "5",
-      "title": "Mua sách ReactJS",
+      "description": "Mua sách ReactJS nâng cao",
       "amount": 150000,
       "type": "expense",
-      "date": "2023-10-26"
+      "date": "2023-10-26",
+      "categoryId": "cat_6"
     },
     {
-      "id": "1764829279018",
-      "title": "Ăn trưa",
-      "amount": 30000,
-      "date": "2025-12-04",
-      "type": "expense"
+      "id": "1709283746123",
+      "description": "Đổ xăng xe máy",
+      "amount": 50000,
+      "type": "expense",
+      "date": "2023-10-27",
+      "categoryId": "cat_3"
     },
     {
-      "title": "Ăn tối",
-      "amount": 35000,
+      "id": "1709283999111",
+      "description": "Đi siêu thị cuối tuần",
+      "amount": 1200000,
+      "type": "expense",
+      "date": "2023-10-28",
+      "categoryId": "cat_2"
+    },
+    {
+      "id": "1764831486078",
+      "description": "ăn sáng tại nhà",
+      "amount": 20000,
       "date": "2025-12-04",
       "type": "expense",
-      "id": "1764829518343"
+      "categoryId": "cat_2"
+    }
+  ],
+  "budgets": [
+    {
+      "id": "bg_1",
+      "categoryId": "cat_2",
+      "month": "10-2023",
+      "limit": 4000000
+    },
+    {
+      "id": "bg_2",
+      "categoryId": "cat_5",
+      "month": "10-2023",
+      "limit": 1000000
     }
   ]
 }

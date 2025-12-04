@@ -1,29 +1,56 @@
+import { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import SummaryCards from '../components/SummaryCards';
 import TransactionTable from '../components/TransactionTable';
-import TransactionChart from '../components/TransactionChart';
-import MonthlyChart from '../components/MonthlyChart';
+import FilterBar from '../components/FilterBar';
+import SpendingStructureChart from '../components/charts/SpendingStructureChart';
+import DailyIncomeExpenseChart from '../components/charts/DailyIncomeExpenseChart';
 
-function HomePage({ transactions, summary, formatCurrency, onEdit, onDelete }) {
+function HomePage({ transactions, categories, budgets, summary, formatCurrency, onEdit, onDelete }) {
+  const [filters, setFilters] = useState({ search: '', type: 'all' });
+
+  const handleFilterChange = (filterType, value) => {
+    setFilters((prev) => ({ ...prev, [filterType]: value }));
+  };
+
+  // Lọc transactions theo filter
+  const filteredTransactions = transactions.filter((transaction) => {
+    const matchesSearch = transaction.description?.toLowerCase().includes(filters.search.toLowerCase()) || false;
+    const matchesType = filters.type === 'all' || transaction.type === filters.type;
+    return matchesSearch && matchesType;
+  });
+
+  // Tính toán summary cho dữ liệu đã lọc
+  const filteredSummary = {
+    income: filteredTransactions
+      .filter((item) => item.type === 'income')
+      .reduce((acc, curr) => acc + Number(curr.amount), 0),
+    expense: filteredTransactions
+      .filter((item) => item.type === 'expense')
+      .reduce((acc, curr) => acc + Number(curr.amount), 0),
+  };
+
   return (
     <Container>
+      <FilterBar onFilterChange={handleFilterChange} />
       <Row>
         <Col md={12}>
-          <SummaryCards income={summary.income} expense={summary.expense} />
+          <SummaryCards income={filteredSummary.income} expense={filteredSummary.expense} />
         </Col>
       </Row>
       <Row className='mb-3'>
         <Col md={6}>
-          <TransactionChart income={summary.income} expense={summary.expense} />
+          <SpendingStructureChart transactions={filteredTransactions} categories={categories} />
         </Col>
         <Col md={6}>
-          <MonthlyChart transactions={transactions} />
+          <DailyIncomeExpenseChart transactions={filteredTransactions} />
         </Col>
       </Row>
       <Row>
         <Col md={12}>
           <TransactionTable
-            transactions={transactions}
+            transactions={filteredTransactions}
+            categories={categories}
             formatCurrency={formatCurrency}
             onEdit={onEdit}
             onDelete={onDelete}

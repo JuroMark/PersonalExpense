@@ -1,21 +1,24 @@
 import { Card, Form, Button } from 'react-bootstrap';
 import { BiPencil, BiPlusCircle, BiCheckCircle, BiXCircle } from 'react-icons/bi';
+import CategorySelector from './CategorySelector';
 
 const TransactionForm = ({
   // Adding default values to avoid uncontrolled to controlled input warning
   formData = {
-    title: '',
+    description: '',
     amount: '',
     date: '',
     type: 'expense',
+    categoryId: '',
   },
+  categories = [],
   handleChange = () => {},
   handleSubmit = (e) => e.preventDefault(),
   editingId = null,
   handleCancelEdit = () => {},
 }) => {
   // Ensure data is always a valid object (in case the prop passed is null)
-  const safeData = formData || { title: '', amount: '', date: '', type: 'expense' };
+  const safeData = formData || { description: '', amount: '', date: '', type: 'expense', categoryId: '' };
 
   return (
     <Card className='mb-3 shadow-sm'>
@@ -59,18 +62,28 @@ const TransactionForm = ({
             </div>
           </Form.Group>
 
+          {/* Category Selector */}
+          <Form.Group className='mb-3'>
+            <CategorySelector
+              categories={categories}
+              selectedCategoryId={safeData.categoryId}
+              onSelect={(categoryId) => handleChange({ target: { name: 'categoryId', value: categoryId } })}
+              filterType={safeData.type}
+            />
+          </Form.Group>
+
           <Form.Group className='mb-3'>
             <Form.Label>Ngày tháng</Form.Label>
             <Form.Control type='date' name='date' value={safeData.date} onChange={handleChange} required />
           </Form.Group>
 
           <Form.Group className='mb-3'>
-            <Form.Label>Nội dung</Form.Label>
+            <Form.Label>Mô tả chi tiết</Form.Label>
             <Form.Control
               type='text'
               placeholder='VD: Ăn sáng...'
-              name='title'
-              value={safeData.title}
+              name='description'
+              value={safeData.description}
               onChange={handleChange}
               required
             />
@@ -90,7 +103,7 @@ const TransactionForm = ({
           </Form.Group>
 
           <div className='d-grid gap-2'>
-            <Button variant={editingId ? 'warning' : 'primary'} type='submit'>
+            <Button variant={editingId ? 'warning' : 'primary'} type='submit' disabled={!safeData.categoryId}>
               {editingId ? (
                 <>
                   <BiCheckCircle className='me-2' />

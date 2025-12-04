@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { getTransactions, deleteTransaction, addTransaction, updateTransaction } from './services/transactionService';
+import { getCategories } from './services/categoryService';
+import { getBudgets } from './services/budgetService';
 import { formatCurrency } from './utils/currencyValidate';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
@@ -11,21 +13,30 @@ import ChartPage from './pages/ChartPage';
 function AppContent() {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [summary, setSummary] = useState({ income: 0, expense: 0 });
   const [editingId, setEditingId] = useState(null);
 
-  // 1. STATE QUẢN LÝ FORM
+  // STATE QUẢN LÝ FORM - Updated to use description and categoryId
   const [formData, setFormData] = useState({
-    title: '',
+    description: '',
     amount: '',
-    date: new Date().toISOString().split('T')[0], // Mặc định là ngày hôm nay (YYYY-MM-DD)
-    type: 'expense', // Mặc định là Chi tiêu
+    date: new Date().toISOString().split('T')[0],
+    type: 'expense',
+    categoryId: '',
   });
 
   const fetchData = async () => {
-    const data = await getTransactions();
-    setTransactions(data);
-    calculateSummary(data);
+    const [transactionsData, categoriesData, budgetsData] = await Promise.all([
+      getTransactions(),
+      getCategories(),
+      getBudgets(),
+    ]);
+    setTransactions(transactionsData);
+    setCategories(categoriesData);
+    setBudgets(budgetsData);
+    calculateSummary(transactionsData);
   };
 
   useEffect(() => {
@@ -50,8 +61,8 @@ function AppContent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.amount) {
-      alert('Vui lòng nhập đủ thông tin!');
+    if (!formData.description || !formData.amount || !formData.categoryId) {
+      alert('Vui lòng nhập đủ thông tin và chọn danh mục!');
       return;
     }
 
@@ -77,10 +88,11 @@ function AppContent() {
 
     // Reset form
     setFormData({
-      title: '',
+      description: '',
       amount: '',
       date: new Date().toISOString().split('T')[0],
       type: 'expense',
+      categoryId: '',
     });
 
     fetchData();
@@ -104,10 +116,11 @@ function AppContent() {
     setEditingId(transaction.id); // Lưu ID đang sửa
     setFormData({
       // Data from transaction to form
-      title: transaction.title,
+      description: transaction.description,
       amount: transaction.amount,
       date: transaction.date,
       type: transaction.type,
+      categoryId: transaction.categoryId,
     });
     navigate('/edit'); // Chuyển đến trang edit
   };
@@ -116,10 +129,11 @@ function AppContent() {
     setEditingId(null); // Exit edit mode
     setFormData({
       // Reset form data
-      title: '',
+      description: '',
       amount: '',
       date: new Date().toISOString().split('T')[0],
       type: 'expense',
+      categoryId: '',
     });
     navigate('/'); // Quay về trang chủ
   };
@@ -133,6 +147,8 @@ function AppContent() {
           element={
             <HomePage
               transactions={transactions}
+              categories={categories}
+              budgets={budgets}
               summary={summary}
               formatCurrency={formatCurrency}
               onEdit={handleEditClick}
@@ -142,13 +158,21 @@ function AppContent() {
         />
         <Route
           path='/add'
-          element={<AddTransactionPage formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} />}
+          element={
+            <AddTransactionPage
+              formData={formData}
+              categories={categories}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+            />
+          }
         />
         <Route
           path='/edit'
           element={
             <EditTransactionPage
               formData={formData}
+              categories={categories}
               editingId={editingId}
               handleChange={handleChange}
               handleSubmit={handleSubmit}
@@ -156,7 +180,12 @@ function AppContent() {
             />
           }
         />
-        <Route path='/charts' element={<ChartPage transactions={transactions} summary={summary} />} />
+        <Route
+          path='/charts'
+          element={
+            <ChartPage transactions={transactions} categories={categories} budgets={budgets} summary={summary} />
+          }
+        />
       </Routes>
     </>
   );
